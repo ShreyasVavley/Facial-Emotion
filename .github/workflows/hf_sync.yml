@@ -23,17 +23,33 @@ jobs:
           cp requirements.txt ../hf_deploy/requirements.txt
           cp Dockerfile ../hf_deploy/Dockerfile
 
-          # 2. Initialize a fresh, history-free Git repository
+          # 2. Dynamically generate the mandatory Hugging Face Space metadata README
+          cat << 'EOF' > ../hf_deploy/README.md
+          ---
+          title: Stealth FER Console
+          emoji: 📸
+          colorFrom: cyan
+          colorTo: slate
+          sdk: docker
+          app_port: 7860
+          pinned: false
+          ---
+
+          # Stealth Console // Facial Emotion Recognition Dashboard
+          A state-of-the-art, high-precision Facial Emotion Recognition pipeline served in an interactive cyberpunk skeuomorphic console!
+          EOF
+
+          # 3. Initialize a fresh, history-free Git repository
           cd ../hf_deploy
           git init
           git checkout -b main
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
           
-          # 3. Add clean files (NO large models/ directory)
+          # 4. Add clean files (NO large models/ directory)
           git add .
-          git commit -m "deploy: Release clean skeuomorphic dashboard"
+          git commit -m "deploy: Release clean skeuomorphic dashboard with HF metadata"
 
-          # 4. Push clean history-free code to Hugging Face
+          # 5. Push clean history-free code to Hugging Face
           git remote add hf https://ShreyasVavley:$HF_TOKEN@huggingface.co/spaces/ShreyasVavley/facial-emotion-console
           git push --force hf main
