@@ -20,5 +20,5 @@ jobs:
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
         run: |
-          git remote add hf https://ShreyasVavley:$HF_TOKEN@huggingface.co/spaces/ShreyasVavley/Facial-Emotion
+          git remote add hf https://ShreyasVavley:$HF_TOKEN@huggingface.co/spaces/ShreyasVavley/facial-emotion-console
           git push --force hf main
