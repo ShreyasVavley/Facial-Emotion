@@ -9,7 +9,7 @@ WORKDIR /code
 
 # Install system dependencies, curl, and download custom CNN weights from GitHub LFS media CDN
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    libgl1-mesa-glx \
+    libgl1 \
     libglib2.0-0 \
     curl \
     ca-certificates \
