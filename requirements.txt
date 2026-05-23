@@ -6,3 +6,5 @@ uvicorn
 scikit-learn
 numpy
 jinja2
+transformers
+huggingface-hub
