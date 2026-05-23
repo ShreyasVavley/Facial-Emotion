@@ -122,24 +122,24 @@ HTML_CONTENT = """
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GOLDEN AEON // SKEUOMORPHIC CYBERPUNK FER CONSOLE</title>
+    <title>STEALTH CONSOLE // SKEUOMORPHIC CYBERPUNK FER</title>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Space+Grotesk:wght@400;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
     <style>
         :root {
             --bg-carbon: #050507;
-            --panel-gold: #16120A;
-            --accent-gold-raw: 212, 175, 55;
-            --accent-gold: #D4AF37;
-            --accent-gold-bright: #FFDF00;
-            --accent-gold-glow: rgba(212, 175, 55, 0.25);
-            --gold-metallic: linear-gradient(135deg, #AA771C 0%, #FFDF00 20%, #D4AF37 40%, #FFDF00 60%, #AA771C 80%, #553300 100%);
-            --bronze-bevel: linear-gradient(to bottom, #8B6508, #3A2A04);
+            --panel-gold: #0C0E12;
+            --accent-gold-raw: 0, 240, 255;
+            --accent-gold: #00F0FF;
+            --accent-gold-bright: #00F0FF;
+            --accent-gold-glow: rgba(0, 240, 255, 0.25);
+            --gold-metallic: linear-gradient(135deg, #1F2937 0%, #F3F4F6 25%, #9CA3AF 50%, #F3F4F6 75%, #1F2937 100%);
+            --bronze-bevel: linear-gradient(to bottom, #4B5563, #1F2937);
             --carbon-texture: linear-gradient(45deg, #111 25%, transparent 25%), 
                               linear-gradient(-45deg, #111 25%, transparent 25%), 
                               linear-gradient(45deg, transparent 75%, #111 75%), 
                               linear-gradient(-45deg, transparent 75%, #111 75%);
-            --text-gold: #F3E5AB;
-            --text-muted: #8F7D56;
+            --text-gold: #E5E7EB;
+            --text-muted: #6B7280;
         }
 
         * {
@@ -151,7 +151,7 @@ HTML_CONTENT = """
 
         body {
             background-color: var(--bg-carbon);
-            background-image: radial-gradient(circle at 50% 50%, #151108 0%, #050507 100%);
+            background-image: radial-gradient(circle at 50% 50%, #0A1018 0%, #050507 100%);
             color: var(--text-gold);
             min-height: 100vh;
             overflow-x: hidden;
@@ -586,7 +586,7 @@ HTML_CONTENT = """
 
     <header>
         <div class="brass-bezel">
-            <div class="logo">GOLDEN AEON // FER CONSOLE</div>
+            <div class="logo">STEALTH CONSOLE // FER</div>
         </div>
         <div class="status-badge">
             <span class="status-led"></span>
@@ -654,7 +654,6 @@ HTML_CONTENT = """
     </div>
 
     <footer>
-        STATEFUL GOLDEN SKEUOMORPHIC ENGINE // CORPUS: SV-FER-948 // ANTIGRAVITY ENGINE 2026
     </footer>
 
     <script>
@@ -813,11 +812,11 @@ HTML_CONTENT = """
                         const scaleX = canvas.width / 320;
                         const scaleY = canvas.height / 240;
                         
-                        // Cyberpunk Neon Golden tracking reticle
-                        ctx.strokeStyle = 'rgba(255, 223, 0, 0.85)';
+                        // Cyberpunk Neon Cyan tracking reticle
+                        ctx.strokeStyle = 'rgba(0, 240, 255, 0.85)';
                         ctx.lineWidth = 3;
                         ctx.shadowBlur = 12;
-                        ctx.shadowColor = '#FFDF00';
+                        ctx.shadowColor = '#00F0FF';
                         
                         ctx.strokeRect(x * scaleX, y * scaleY, w * scaleX, h * scaleY);
                         
@@ -828,7 +827,7 @@ HTML_CONTENT = """
                         const bh = h * scaleY;
                         const len = Math.min(bw, bh) * 0.25;
                         
-                        ctx.strokeStyle = '#FFDF00';
+                        ctx.strokeStyle = '#00F0FF';
                         ctx.lineWidth = 4;
                         ctx.shadowBlur = 20;
                         
@@ -861,7 +860,7 @@ HTML_CONTENT = """
                         ctx.stroke();
                         
                         // Label tag in Share Tech Mono font
-                        ctx.fillStyle = '#FFDF00';
+                        ctx.fillStyle = '#00F0FF';
                         ctx.font = 'bold 15px "Share Tech Mono", monospace';
                         ctx.shadowBlur = 0; // Clear shadow
                         ctx.fillText(`TARGET LOCKED // ${result.emotion.toUpperCase()} (${(result.confidence * 100).toFixed(0)}%)`, bx, by - 12);
