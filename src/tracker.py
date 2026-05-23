@@ -4,7 +4,7 @@ import numpy as np
 # Load pre-trained Haar Cascade face detector from OpenCV's internal data directory
 FACE_CASCADE = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
 
-def detect_faces(frame):
+def detect_faces(frame, scale_factor=1.1, min_neighbors=5):
     """
     Detects faces in a frame using Haar Cascades.
     If no face is detected, returns a fallback bounding box covering the central 85% of the image.
@@ -16,8 +16,8 @@ def detect_faces(frame):
         
     faces = FACE_CASCADE.detectMultiScale(
         gray,
-        scaleFactor=1.1,
-        minNeighbors=5,
+        scaleFactor=scale_factor if scale_factor > 1.0 else 1.1,
+        minNeighbors=int(min_neighbors) if min_neighbors > 0 else 5,
         minSize=(30, 30)
     )
     
