@@ -12,17 +12,28 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-          lfs: true
 
-      - name: Install Git LFS
-        run: |
-          git lfs install
-
-      - name: Push to Hugging Face
+      - name: Prepare Clean Hugging Face Deployment
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
         run: |
+          # 1. Create a temporary clean deploy directory
+          mkdir -p ../hf_deploy
+          cp -r src ../hf_deploy/src
+          cp requirements.txt ../hf_deploy/requirements.txt
+          cp Dockerfile ../hf_deploy/Dockerfile
+
+          # 2. Initialize a fresh, history-free Git repository
+          cd ../hf_deploy
+          git init
+          git checkout -b main
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          
+          # 3. Add clean files (NO large models/ directory)
+          git add .
+          git commit -m "deploy: Release clean skeuomorphic dashboard"
+
+          # 4. Push clean history-free code to Hugging Face
           git remote add hf https://ShreyasVavley:$HF_TOKEN@huggingface.co/spaces/ShreyasVavley/facial-emotion-console
           git push --force hf main
