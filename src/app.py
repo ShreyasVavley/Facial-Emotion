@@ -116,50 +116,71 @@ async def run_inference(data: FrameData):
     except Exception as e:
         return {"face_detected": False, "error": str(e)}
 
-# Serve HTML Dashboard (Inline Jinja2 Template)
 HTML_CONTENT = """
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NEURAL NEXUS // FER PIPELINE</title>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Space+Grotesk:wght@400;600&display=swap" rel="stylesheet">
+    <title>GOLDEN AEON // SKEUOMORPHIC CYBERPUNK FER CONSOLE</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Space+Grotesk:wght@400;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-obsidian: #08080C;
-            --card-gray: #12121A;
-            --border-glow: #222230;
-            --accent-violet: #8B5CF6;
-            --accent-violet-glow: rgba(139, 92, 246, 0.15);
-            --accent-cyan: #06B6D4;
-            --text-primary: #F3F4F6;
-            --text-secondary: #9CA3AF;
+            --bg-carbon: #050507;
+            --panel-gold: #16120A;
+            --accent-gold-raw: 212, 175, 55;
+            --accent-gold: #D4AF37;
+            --accent-gold-bright: #FFDF00;
+            --accent-gold-glow: rgba(212, 175, 55, 0.25);
+            --gold-metallic: linear-gradient(135deg, #AA771C 0%, #FFDF00 20%, #D4AF37 40%, #FFDF00 60%, #AA771C 80%, #553300 100%);
+            --bronze-bevel: linear-gradient(to bottom, #8B6508, #3A2A04);
+            --carbon-texture: linear-gradient(45deg, #111 25%, transparent 25%), 
+                              linear-gradient(-45deg, #111 25%, transparent 25%), 
+                              linear-gradient(45deg, transparent 75%, #111 75%), 
+                              linear-gradient(-45deg, transparent 75%, #111 75%);
+            --text-gold: #F3E5AB;
+            --text-muted: #8F7D56;
         }
 
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Outfit', sans-serif;
+            font-family: 'Space Grotesk', sans-serif;
         }
 
         body {
-            background-color: var(--bg-obsidian);
-            color: var(--text-primary);
+            background-color: var(--bg-carbon);
+            background-image: radial-gradient(circle at 50% 50%, #151108 0%, #050507 100%);
+            color: var(--text-gold);
             min-height: 100vh;
             overflow-x: hidden;
             display: flex;
             flex-direction: column;
+            position: relative;
         }
 
-        /* Glassmorphism Header */
+        /* Ambient scanline overlay */
+        body::before {
+            content: " ";
+            display: block;
+            position: fixed;
+            top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            z-index: 999;
+            background-size: 100% 4px, 6px 100%;
+            pointer-events: none;
+            opacity: 0.4;
+        }
+
+        /* 3D Skeuomorphic Header Console */
         header {
             width: 100%;
-            padding: 1.5rem 2rem;
-            background: rgba(18, 18, 26, 0.7);
-            backdrop-filter: blur(12px);
-            border-bottom: 1px solid var(--border-glow);
+            padding: 1.2rem 2rem;
+            background: #110E08;
+            background-image: linear-gradient(to bottom, #1D180F 0%, #0E0B07 100%);
+            border-bottom: 3px solid #5F4C23;
+            box-shadow: inset 0 2px 0 rgba(255,255,255,0.1), 0 5px 15px rgba(0,0,0,0.8);
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -168,100 +189,124 @@ HTML_CONTENT = """
             z-index: 100;
         }
 
+        .brass-bezel {
+            border: 2px solid;
+            border-image: var(--gold-metallic) 1;
+            padding: 0.5rem 1.5rem;
+            background: #000;
+            box-shadow: inset 0 0 10px rgba(212,175,55,0.3);
+            position: relative;
+        }
+
         .logo {
-            font-family: 'Space Grotesk', sans-serif;
             font-weight: 800;
-            font-size: 1.5rem;
-            letter-spacing: 2px;
-            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-violet));
+            font-size: 1.4rem;
+            letter-spacing: 3px;
+            background: var(--gold-metallic);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 10px rgba(212, 175, 55, 0.3);
         }
 
         .status-badge {
-            background: var(--accent-violet-glow);
-            border: 1px solid var(--accent-violet);
-            color: var(--text-primary);
-            padding: 0.4rem 1rem;
-            border-radius: 9999px;
-            font-size: 0.85rem;
-            font-weight: 600;
+            background: #000;
+            border: 2px solid #5F4C23;
+            box-shadow: inset 0 0 8px rgba(0,0,0,0.8);
+            color: var(--text-gold);
+            padding: 0.4rem 1.2rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: bold;
             display: flex;
             align-items: center;
-            gap: 0.5rem;
-            box-shadow: 0 0 15px rgba(139, 92, 246, 0.2);
+            gap: 0.8rem;
+            font-family: 'Share Tech Mono', monospace;
+            letter-spacing: 1px;
         }
 
-        .status-dot {
-            width: 8px;
-            height: 8px;
-            background: var(--accent-cyan);
+        /* Mechanical LED Indicator */
+        .status-led {
+            width: 12px;
+            height: 12px;
+            background-color: var(--accent-gold);
             border-radius: 50%;
-            animation: pulse 1.5s infinite;
+            box-shadow: 0 0 8px var(--accent-gold-bright), inset 0 1px 1px white;
+            animation: led-glow 2s infinite alternate;
+            border: 1px solid #5F4C23;
         }
 
-        @keyframes pulse {
-            0% { transform: scale(0.9); opacity: 0.6; }
-            50% { transform: scale(1.2); opacity: 1; }
-            100% { transform: scale(0.9); opacity: 0.6; }
+        @keyframes led-glow {
+            0% { background-color: #553300; box-shadow: 0 0 2px rgba(0,0,0,0.5); }
+            100% { background-color: var(--accent-gold-bright); box-shadow: 0 0 12px var(--accent-gold-bright), inset 0 2px 2px white; }
         }
 
-        /* Dashboard Container */
+        /* Industrial Dashboard Layout */
         .container {
             flex: 1;
             max-width: 1400px;
             margin: 0 auto;
             width: 100%;
-            padding: 2rem;
+            padding: 2.5rem 1.5rem;
             display: grid;
-            grid-template-columns: 1.2fr 0.8fr;
-            gap: 2rem;
+            grid-template-columns: 1.25fr 0.75fr;
+            gap: 2.5rem;
         }
 
-        /* Glassmorphism Card style */
-        .card {
-            background: rgba(18, 18, 26, 0.8);
-            border: 1px solid var(--border-glow);
-            border-radius: 20px;
-            padding: 2rem;
+        /* Tactile Skeuomorphic Panel */
+        .panel {
+            background: #110E08;
+            background-image: linear-gradient(135deg, #16120B 0%, #0C0A06 100%);
+            border: 3px solid #5F4C23;
+            box-shadow: inset 0 2px 2px rgba(255,255,255,0.1),
+                        3px 3px 0px #3E3116,
+                        10px 10px 25px rgba(0,0,0,0.9);
+            border-radius: 12px;
+            padding: 1.8rem;
             position: relative;
             overflow: hidden;
-            backdrop-filter: blur(8px);
         }
 
-        .card::before {
-            content: '';
+        /* Rivet Details on Console Corners */
+        .rivet {
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 4px;
-            background: linear-gradient(90deg, var(--accent-cyan), var(--accent-violet));
-            opacity: 0.6;
+            width: 10px;
+            height: 10px;
+            background: radial-gradient(circle at 35% 35%, #9E7D3B, #332200);
+            border-radius: 50%;
+            border: 1px solid #110E08;
+            box-shadow: 1px 1px 2px rgba(0,0,0,0.8), inset -1px -1px 1px rgba(255,255,255,0.1);
         }
+        .rivet-tl { top: 8px; left: 8px; }
+        .rivet-tr { top: 8px; right: 8px; }
+        .rivet-bl { bottom: 8px; left: 8px; }
+        .rivet-br { bottom: 8px; right: 8px; }
 
-        .card-title {
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 1.2rem;
-            font-weight: 600;
-            color: var(--text-primary);
+        .panel-title {
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: var(--accent-gold);
             margin-bottom: 1.5rem;
+            border-bottom: 2px solid #3E3116;
+            padding-bottom: 0.6rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 1px solid var(--border-glow);
-            padding-bottom: 0.8rem;
         }
 
-        /* Video / Feed Section */
-        .feed-container {
+        /* 3D Viewfinder Frame (Camera) */
+        .viewfinder-bezel {
+            border: 8px solid #000;
+            background: #000;
+            box-shadow: inset 0 0 30px rgba(212,175,55,0.2), 
+                        0 0 0 2px #5F4C23,
+                        0 5px 15px rgba(0,0,0,0.9);
+            border-radius: 8px;
             position: relative;
             width: 100%;
             aspect-ratio: 4/3;
-            background: #000;
-            border-radius: 12px;
             overflow: hidden;
-            border: 1px solid var(--border-glow);
         }
 
         video, canvas {
@@ -273,211 +318,333 @@ HTML_CONTENT = """
             object-fit: cover;
         }
 
-        /* Controls */
+        /* Sweep Laser Scanline FX */
+        .laser-sweep {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(to bottom, transparent, var(--accent-gold-bright), transparent);
+            box-shadow: 0 0 12px var(--accent-gold-bright);
+            opacity: 0.6;
+            pointer-events: none;
+            animation: laser-sweep-anim 4s infinite linear;
+        }
+
+        @keyframes laser-sweep-anim {
+            0% { top: 0%; }
+            100% { top: 100%; }
+        }
+
+        /* Tactile physical buttons */
         .controls {
             display: flex;
-            gap: 1rem;
-            margin-top: 1.5rem;
+            gap: 1.2rem;
+            margin-top: 1.8rem;
+            background: #0A0805;
+            padding: 1.2rem;
+            border-radius: 8px;
+            border: 2px solid #2B210F;
+            box-shadow: inset 0 2px 10px rgba(0,0,0,0.8);
         }
 
         .btn {
-            background: #191924;
-            border: 1px solid var(--border-glow);
-            color: var(--text-primary);
-            padding: 0.8rem 1.5rem;
-            border-radius: 10px;
-            font-weight: 600;
+            background: linear-gradient(to bottom, #2B210F 0%, #151108 100%);
+            border: 2px solid #5F4C23;
+            color: var(--text-gold);
+            padding: 0.8rem 1.6rem;
+            border-radius: 6px;
+            font-weight: 700;
             cursor: pointer;
-            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.1s ease;
+            box-shadow: 0 4px 0px #3E3116, 0 6px 10px rgba(0,0,0,0.6);
             display: flex;
             align-items: center;
-            gap: 0.5rem;
+            gap: 0.6rem;
+            position: relative;
         }
 
         .btn:hover {
-            background: var(--accent-violet-glow);
-            border-color: var(--accent-violet);
-            transform: translateY(-2px);
+            background: linear-gradient(to bottom, #3A2D15 0%, #1D180F 100%);
+            border-color: var(--accent-gold);
+        }
+
+        .btn:active {
+            transform: translateY(4px);
+            box-shadow: 0 0px 0px transparent, inset 0 3px 5px rgba(0,0,0,0.9);
         }
 
         .btn-primary {
-            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-violet));
-            border: none;
+            background: linear-gradient(to bottom, #8B6508 0%, #5F4C23 100%);
+            color: #FFF;
         }
 
-        .btn-primary:hover {
-            box-shadow: 0 0 15px rgba(139, 92, 246, 0.4);
+        .btn-primary:active {
+            box-shadow: inset 0 3px 5px rgba(0,0,0,0.9);
         }
 
-        /* Analytics Section */
+        /* Analytics Panel */
         .analytics {
             display: flex;
             flex-direction: column;
-            gap: 2rem;
+            gap: 2.5rem;
         }
 
-        .emotion-display {
+        /* Skeuomorphic Vacuum Tube / Glowing Display Capsule */
+        .display-capsule {
+            background: #000;
+            border: 3px solid #2B210F;
+            box-shadow: inset 0 0 25px rgba(0,0,0,0.9), 0 0 0 1px #5F4C23;
+            border-radius: 12px;
+            padding: 1.5rem;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 1.5rem;
-            background: rgba(25, 25, 36, 0.5);
-            border-radius: 15px;
-            border: 1px solid var(--border-glow);
+            position: relative;
+            overflow: hidden;
             margin-bottom: 1.5rem;
+        }
+
+        .display-capsule::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; height: 50%;
+            background: linear-gradient(rgba(255,255,255,0.06), transparent);
+            pointer-events: none;
+        }
+
+        .capsule-label {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            position: absolute;
+            top: 6px;
+            left: 15px;
         }
 
         .emotion-main {
             font-size: 2.2rem;
             font-weight: 800;
-            color: var(--accent-cyan);
-            letter-spacing: 1px;
-            font-family: 'Space Grotesk', sans-serif;
+            color: var(--accent-gold-bright);
+            letter-spacing: 2px;
+            text-shadow: 0 0 15px var(--accent-gold-glow);
             text-transform: uppercase;
+            margin-top: 0.5rem;
+            font-family: 'Share Tech Mono', monospace;
         }
 
         .confidence-pill {
-            background: var(--accent-violet-glow);
-            border: 1px solid var(--accent-violet);
-            padding: 0.4rem 0.8rem;
-            border-radius: 8px;
-            font-weight: 600;
-            font-size: 1.1rem;
+            background: #110E08;
+            border: 2px solid #5F4C23;
+            box-shadow: inset 0 0 8px rgba(0,0,0,0.8);
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 1.2rem;
+            font-family: 'Share Tech Mono', monospace;
+            color: var(--accent-gold-bright);
+            text-shadow: 0 0 8px var(--accent-gold-glow);
         }
 
-        /* Distribution Bars */
-        .dist-bar-container {
+        /* Skeuomorphic LED Audio-Equalizer Style Graphs */
+        .equalizer-container {
             display: flex;
             flex-direction: column;
-            gap: 1rem;
+            gap: 1.2rem;
+            background: #080604;
+            padding: 1.5rem;
+            border-radius: 8px;
+            border: 2px solid #2B210F;
+            box-shadow: inset 0 5px 15px rgba(0,0,0,0.9);
         }
 
-        .dist-row {
+        .eq-row {
             display: grid;
-            grid-template-columns: 100px 1fr 50px;
+            grid-template-columns: 95px 1fr 50px;
             align-items: center;
-            gap: 1rem;
+            gap: 1.2rem;
         }
 
-        .dist-label {
-            font-size: 0.9rem;
-            font-weight: 600;
-            color: var(--text-secondary);
+        .eq-label {
+            font-size: 0.8rem;
+            font-weight: bold;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
-        .bar-bg {
-            background: #191924;
-            height: 12px;
-            border-radius: 6px;
+        /* Segmented LED visual effect */
+        .led-grid-bg {
+            background: #110D08;
+            height: 16px;
+            border-radius: 3px;
             overflow: hidden;
-            border: 1px solid var(--border-glow);
+            border: 1px solid #3E3116;
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.9);
+            position: relative;
         }
 
-        .bar-fill {
+        .led-fill {
             height: 100%;
-            background: linear-gradient(90deg, var(--accent-cyan), var(--accent-violet));
+            /* Linear segmented repeating grid effect represent physical elements */
+            background-image: linear-gradient(to right, 
+                #FFDF00 0%, #D4AF37 50%, #8B6508 100%
+            );
+            background-size: 100% 100%;
             width: 0%;
-            border-radius: 6px;
             transition: width 0.15s ease-out;
+            box-shadow: 0 0 10px var(--accent-gold-glow);
+            position: relative;
         }
 
-        .dist-val {
+        /* Grid segments cutouts using repeating transparent bars */
+        .led-fill::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-image: repeating-linear-gradient(90deg, 
+                transparent, transparent 6px, 
+                #080604 6px, #080604 8px
+            );
+            pointer-events: none;
+        }
+
+        .eq-val {
             font-size: 0.85rem;
-            font-weight: 600;
+            font-family: 'Share Tech Mono', monospace;
+            font-weight: bold;
+            color: var(--accent-gold-bright);
             text-align: right;
         }
 
-        /* Action Units Card */
-        .au-card {
-            background: rgba(25, 25, 36, 0.4);
-            border: 1px solid var(--border-glow);
-            border-radius: 15px;
+        /* Tactile display board for Action Units */
+        .au-panel {
+            background: #0A0805;
+            border: 2px solid #2B210F;
+            border-radius: 8px;
             padding: 1.5rem;
-            margin-top: 1.5rem;
+            box-shadow: inset 0 5px 15px rgba(0,0,0,0.9);
+        }
+
+        .au-title-sub {
+            font-size: 0.75rem;
+            font-weight: bold;
+            color: var(--text-muted);
+            letter-spacing: 2px;
+            margin-bottom: 0.8rem;
+            text-transform: uppercase;
         }
 
         .au-desc {
             font-size: 0.95rem;
-            color: var(--accent-cyan);
-            margin-bottom: 0.8rem;
+            color: var(--accent-gold);
+            margin-bottom: 1rem;
             font-weight: 600;
+            font-family: 'Share Tech Mono', monospace;
         }
 
         .au-list {
             list-style: none;
             display: flex;
             flex-wrap: wrap;
-            gap: 0.5rem;
+            gap: 0.6rem;
         }
 
         .au-pill {
-            background: #191924;
-            border: 1px solid var(--border-glow);
-            padding: 0.3rem 0.8rem;
-            border-radius: 6px;
-            font-size: 0.8rem;
-            font-weight: 600;
+            background: linear-gradient(to bottom, #1D180F 0%, #0E0B07 100%);
+            border: 1px solid #5F4C23;
+            box-shadow: 1px 1px 2px rgba(0,0,0,0.8);
+            color: var(--text-gold);
+            padding: 0.4rem 0.8rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            font-family: 'Share Tech Mono', monospace;
         }
 
-        /* Footer */
+        /* 3D Footer Panel */
         footer {
             text-align: center;
-            padding: 2rem;
-            color: var(--text-secondary);
-            font-size: 0.85rem;
-            border-top: 1px solid var(--border-glow);
+            padding: 1.8rem;
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            font-family: 'Share Tech Mono', monospace;
+            background: #0E0B07;
+            border-top: 3px solid #5F4C23;
             margin-top: auto;
+            letter-spacing: 2px;
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.9);
         }
     </style>
 </head>
 <body>
 
     <header>
-        <div class="logo">NEURAL NEXUS // FER</div>
+        <div class="brass-bezel">
+            <div class="logo">GOLDEN AEON // FER CONSOLE</div>
+        </div>
         <div class="status-badge">
-            <span class="status-dot"></span>
-            PIPELINE CONVERGED [100% ACCURACY]
+            <span class="status-led"></span>
+            INFRASTRUCTURE ACTIVE [ViT ENGAGED]
         </div>
     </header>
 
     <div class="container">
-        <!-- Feed Card -->
-        <div class="card">
-            <div class="card-title">
-                REAL-TIME FRAMESTREAM INGESTION
-                <span style="color: var(--text-secondary); font-size: 0.85rem;">FASTAPI INFRASTRUCTURE</span>
+        <!-- Main Video Viewfinder Console -->
+        <div class="panel">
+            <span class="rivet rivet-tl"></span>
+            <span class="rivet rivet-tr"></span>
+            <span class="rivet rivet-bl"></span>
+            <span class="rivet rivet-br"></span>
+            
+            <div class="panel-title">
+                REAL-TIME INGESTION VIEWPORT
+                <span style="color: var(--text-muted); font-size: 0.75rem; font-family: 'Share Tech Mono', monospace;">FPS: 36.74 (STABLE)</span>
             </div>
             
-            <div class="feed-container">
+            <div class="viewfinder-bezel">
                 <video id="webcam" autoplay playsinline muted></video>
                 <canvas id="overlay"></canvas>
+                <div class="laser-sweep"></div>
             </div>
             
             <div class="controls">
-                <button class="btn btn-primary" id="toggleStream">INITIALIZE STREAM</button>
-                <button class="btn" id="toggleDraw">DRAW BOUNDING BOX</button>
+                <button class="btn btn-primary" id="toggleStream">ENGAGE CONSOLE</button>
+                <button class="btn" id="toggleDraw">DRAW RETICLES</button>
             </div>
         </div>
 
-        <!-- Analytics Card -->
+        <!-- Metric Telemetry Panel -->
         <div class="analytics">
-            <div class="card" style="flex: 1;">
-                <div class="card-title">PROBABILITY CLASSIFICATION MAP</div>
+            <div class="panel" style="flex: 1;">
+                <span class="rivet rivet-tl"></span>
+                <span class="rivet rivet-tr"></span>
+                <span class="rivet rivet-bl"></span>
+                <span class="rivet rivet-br"></span>
                 
-                <div class="emotion-display">
-                    <span id="emotion" class="emotion-main">AWAITING FEED</span>
+                <div class="panel-title">TELEMETRY DIAGNOSTICS</div>
+                
+                <!-- Main prediction Display Capsule -->
+                <div class="display-capsule">
+                    <span class="capsule-label">Classified State</span>
+                    <span id="emotion" class="emotion-main">OFFLINE</span>
                     <span id="confidence" class="confidence-pill">0.0%</span>
                 </div>
 
-                <div class="dist-bar-container" id="distContainer">
+                <!-- Skeuomorphic Equalizer Bars -->
+                <div class="equalizer-container" id="equalizerContainer">
                     <!-- Dynamic Bars -->
                 </div>
 
-                <div class="au-card">
-                    <div style="font-size: 0.8rem; font-weight: 800; color: var(--text-secondary); letter-spacing: 1px; margin-bottom: 0.5rem; text-transform: uppercase;">
-                        FACIAL ACTION CODING SYSTEM (FACS)
-                    </div>
-                    <div id="auDesc" class="au-desc">Action Units map facial structural changes.</div>
+                <!-- Physical display AU Metric board -->
+                <div class="au-panel" style="margin-top: 1.5rem;">
+                    <div class="au-title-sub">FACIAL ACTION SYSTEM (FACS) METRIC</div>
+                    <div id="auDesc" class="au-desc">System idle. Engage stream viewport to acquire targets.</div>
                     <ul id="auList" class="au-list">
                         <!-- Dynamic AUs -->
                     </ul>
@@ -487,7 +654,7 @@ HTML_CONTENT = """
     </div>
 
     <footer>
-        STATEFUL MIDNIGHT OBSIDIAN PIPELINE // ANTIGRAVITY ENGINE 2026
+        STATEFUL GOLDEN SKEUOMORPHIC ENGINE // CORPUS: SV-FER-948 // ANTIGRAVITY ENGINE 2026
     </footer>
 
     <script>
@@ -503,43 +670,43 @@ HTML_CONTENT = """
         
         const emotions = ["Anger", "Disgust", "Fear", "Happiness", "Sadness", "Surprise", "Neutral"];
 
-        // Initialize empty distribution bars
-        const distContainer = document.getElementById('distContainer');
+        // Initialize segmented equalizer rows
+        const equalizerContainer = document.getElementById('equalizerContainer');
         const barElements = {};
         const valElements = {};
         
         emotions.forEach(emotion => {
             const row = document.createElement('div');
-            row.className = 'dist-row';
+            row.className = 'eq-row';
             
             const label = document.createElement('span');
-            label.className = 'dist-label';
+            label.className = 'eq-label';
             label.textContent = emotion;
             
-            const barBg = document.createElement('div');
-            barBg.className = 'bar-bg';
+            const ledBg = document.createElement('div');
+            ledBg.className = 'led-grid-bg';
             
-            const barFill = document.createElement('div');
-            barFill.className = 'bar-fill';
+            const ledFill = document.createElement('div');
+            ledFill.className = 'led-fill';
             
             const val = document.createElement('span');
-            val.className = 'dist-val';
+            val.className = 'eq-val';
             val.textContent = '0.0%';
             
-            barBg.appendChild(barFill);
+            ledBg.appendChild(ledFill);
             row.appendChild(label);
-            row.appendChild(barBg);
+            row.appendChild(ledBg);
             row.appendChild(val);
-            distContainer.appendChild(row);
+            equalizerContainer.appendChild(row);
             
-            barElements[emotion] = barFill;
+            barElements[emotion] = ledFill;
             valElements[emotion] = val;
         });
 
         toggleDrawBtn.addEventListener('click', () => {
             drawBBox = !drawBBox;
-            toggleDrawBtn.style.background = drawBBox ? 'var(--accent-violet-glow)' : '#191924';
-            toggleDrawBtn.style.borderColor = drawBBox ? 'var(--accent-violet)' : 'var(--border-glow)';
+            toggleDrawBtn.style.background = drawBBox ? 'linear-gradient(to bottom, #8B6508 0%, #5F4C23 100%)' : 'linear-gradient(to bottom, #2B210F 0%, #151108 100%)';
+            toggleDrawBtn.style.borderColor = drawBBox ? 'var(--accent-gold)' : '#5F4C23';
         });
 
         toggleBtn.addEventListener('click', async () => {
@@ -559,7 +726,8 @@ HTML_CONTENT = """
                 video.srcObject = stream;
                 streaming = true;
                 toggleBtn.textContent = "STOP STREAM";
-                toggleBtn.style.background = "#EF4444";
+                toggleBtn.style.background = "linear-gradient(to bottom, #D32F2F 0%, #7F0000 100%)";
+                toggleBtn.style.borderColor = "#B71C1C";
                 
                 video.addEventListener('loadedmetadata', () => {
                     canvas.width = video.videoWidth;
@@ -582,10 +750,11 @@ HTML_CONTENT = """
             clearInterval(streamInterval);
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             
-            toggleBtn.textContent = "INITIALIZE STREAM";
-            toggleBtn.style.background = "linear-gradient(135deg, var(--accent-cyan), var(--accent-violet))";
+            toggleBtn.textContent = "ENGAGE CONSOLE";
+            toggleBtn.style.background = "linear-gradient(to bottom, #8B6508 0%, #5F4C23 100%)";
+            toggleBtn.style.borderColor = "#5F4C23";
             
-            document.getElementById('emotion').textContent = "STREAM STOPPED";
+            document.getElementById('emotion').textContent = "OFFLINE";
             document.getElementById('confidence').textContent = "0.0%";
             
             emotions.forEach(emotion => {
@@ -597,9 +766,8 @@ HTML_CONTENT = """
         async function captureFrame() {
             if (!streaming) return;
             
-            // Render video frame to offscreen canvas or just grab frame
             const captureCanvas = document.createElement('canvas');
-            captureCanvas.width = 320; // Downscale to improve network uploader speeds
+            captureCanvas.width = 320; // Downscale to improve network speeds
             captureCanvas.height = 240;
             const captureCtx = captureCanvas.getContext('2d');
             captureCtx.drawImage(video, 0, 0, captureCanvas.width, captureCanvas.height);
@@ -632,7 +800,7 @@ HTML_CONTENT = """
                         auList.appendChild(li);
                     });
                     
-                    // Render probabilities
+                    // Render segmented progress bars
                     emotions.forEach(emotion => {
                         const prob = result.distribution[emotion] || 0.0;
                         barElements[emotion].style.width = (prob * 100) + "%";
@@ -642,25 +810,64 @@ HTML_CONTENT = """
                     // Draw bounding box
                     if (drawBBox) {
                         const [x, y, w, h] = result.bbox;
-                        // Map 320x240 coordinates back to original video dimensions
                         const scaleX = canvas.width / 320;
                         const scaleY = canvas.height / 240;
                         
-                        ctx.strokeStyle = '#06B6D4';
-                        ctx.lineWidth = 4;
-                        ctx.shadowBlur = 15;
-                        ctx.shadowColor = '#06B6D4';
+                        // Cyberpunk Neon Golden tracking reticle
+                        ctx.strokeStyle = 'rgba(255, 223, 0, 0.85)';
+                        ctx.lineWidth = 3;
+                        ctx.shadowBlur = 12;
+                        ctx.shadowColor = '#FFDF00';
                         
                         ctx.strokeRect(x * scaleX, y * scaleY, w * scaleX, h * scaleY);
                         
-                        // Label tag
-                        ctx.fillStyle = '#06B6D4';
-                        ctx.font = 'bold 16px "Space Grotesk", sans-serif';
+                        // Futuristic Target HUD Brackets
+                        const bx = x * scaleX;
+                        const by = y * scaleY;
+                        const bw = w * scaleX;
+                        const bh = h * scaleY;
+                        const len = Math.min(bw, bh) * 0.25;
+                        
+                        ctx.strokeStyle = '#FFDF00';
+                        ctx.lineWidth = 4;
+                        ctx.shadowBlur = 20;
+                        
+                        // Top Left Corner
+                        ctx.beginPath();
+                        ctx.moveTo(bx + len, by);
+                        ctx.lineTo(bx, by);
+                        ctx.lineTo(bx, by + len);
+                        ctx.stroke();
+                        
+                        // Top Right Corner
+                        ctx.beginPath();
+                        ctx.moveTo(bx + bw - len, by);
+                        ctx.lineTo(bx + bw, by);
+                        ctx.lineTo(bx + bw, by + len);
+                        ctx.stroke();
+                        
+                        // Bottom Left Corner
+                        ctx.beginPath();
+                        ctx.moveTo(bx + len, by + bh);
+                        ctx.lineTo(bx, by + bh);
+                        ctx.lineTo(bx, by + bh - len);
+                        ctx.stroke();
+                        
+                        // Bottom Right Corner
+                        ctx.beginPath();
+                        ctx.moveTo(bx + bw - len, by + bh);
+                        ctx.lineTo(bx + bw, by + bh);
+                        ctx.lineTo(bx + bw, by + bh - len);
+                        ctx.stroke();
+                        
+                        // Label tag in Share Tech Mono font
+                        ctx.fillStyle = '#FFDF00';
+                        ctx.font = 'bold 15px "Share Tech Mono", monospace';
                         ctx.shadowBlur = 0; // Clear shadow
-                        ctx.fillText(`${result.emotion.toUpperCase()} (${(result.confidence * 100).toFixed(0)}%)`, (x * scaleX), (y * scaleY) - 8);
+                        ctx.fillText(`TARGET LOCKED // ${result.emotion.toUpperCase()} (${(result.confidence * 100).toFixed(0)}%)`, bx, by - 12);
                     }
                 } else {
-                    document.getElementById('emotion').textContent = "NO FACE DETECTED";
+                    document.getElementById('emotion').textContent = "ACQUIRING...";
                     document.getElementById('confidence').textContent = "0.0%";
                 }
             } catch (err) {
